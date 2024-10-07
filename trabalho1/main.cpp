@@ -7,37 +7,50 @@ using namespace std;
 
 int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& profit) {
     
-    // Vetor de processos
-    vector<tuple<int, int, int>> processos;
+    // Vetor de tarefas (processos)
+    vector<tuple<int, int, int>> tarefas;
 
-    // Adiciona os processos no vetor
+    // Adiciona as tarefas no vetor (tempo de fim, tempo de início, lucro)
     for (int i = 0; i < startTime.size(); i++) {
-        processos.push_back({endTime[i], startTime[i], profit[i]});
+        tarefas.push_back({endTime[i], startTime[i], profit[i]});
     }
 
-    // Ordena os processos pelo tempo de término
-    sort(processos.begin(), processos.end());
+    // Ordena as tarefas pelo tempo de término
+    sort(tarefas.begin(), tarefas.end());
 
-    // Vetor de lucro
-    vector<int> lucro(startTime.size());
+    // Vetor que guarda o lucro máximo até cada tarefa
+    vector<int> lucroMaximo(startTime.size());
 
-    // Calcula o lucro máximo
-    lucro[0] = get<2>(processos[0]);
-    for (int i = 1; i < processos.size(); i++) {
-        int profit = get<2>(processos[i]);
+    // O primeiro lucro é o lucro da primeira tarefa
+    lucroMaximo[0] = get<2>(tarefas[0]);
+
+    // Calcula o lucro máximo para cada tarefa
+    for (int i = 1; i < tarefas.size(); i++) {
+        // Lucro da tarefa atual
+        int lucroAtual = get<2>(tarefas[i]);
+
+        // Busca a última tarefa que não sobrepõe com a atual
         int l = 0, r = i - 1;
+
+        // Busca binária para encontrar a última tarefa que termina antes da atual
         while (l <= r) {
-            int m = l + (r - l) / 2;
-            if (get<0>(processos[m]) <= get<1>(processos[i])) {
-                l = m + 1;
+            int meio = l + (r - l) / 2;
+            if (get<0>(tarefas[meio]) <= get<1>(tarefas[i])) {
+                l = meio + 1;
             } else {
-                r = m - 1;
+                r = meio - 1;
             }
         }
+
+        // Se encontrou uma tarefa compatível, soma o lucro dessa tarefa ao lucro atual
         if (r >= 0) {
-            profit += lucro[r];
+            lucroAtual += lucroMaximo[r];
         }
-        lucro[i] = max(profit, lucro[i - 1]);
+
+        // Atualiza o lucro máximo até a tarefa atual
+        lucroMaximo[i] = max(lucroAtual, lucroMaximo[i - 1]);
     }
-    return lucro.back();
+
+    // Retorna o lucro máximo que pode ser obtido
+    return lucroMaximo.back();
 }
