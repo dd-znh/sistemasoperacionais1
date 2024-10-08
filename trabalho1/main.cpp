@@ -54,3 +54,15 @@ int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& pro
     // Retorna o lucro máximo que pode ser obtido
     return lucroMaximo.back();
 }
+
+int main() {
+    // Colocar entradas aqui (entradas de teste do enunciado do trabalho estão no exemplo abaixo)
+    vector<int> startTime = {1, 2, 3, 3};
+    vector<int> endTime = {3, 4, 5, 6};
+    vector<int> profit = {50, 10, 40, 70};
+
+    // Printa o resultado
+    cout << jobScheduling(startTime, endTime, profit) << endl;
+
+    return 0;
+}
